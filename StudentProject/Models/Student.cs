@@ -1,0 +1,44 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace StudentProject.Models
+{
+    public class Student : Person
+    {
+        public int RollNumber { get; private set; }
+        private char _grade;
+        public char Grade 
+        { get => _grade;
+            private set 
+            { 
+                char g = char.ToUpper(value);
+                if (!"ABCDEF".Contains(g))
+                {
+                    throw new ArgumentException("Grade must be between A-F.");
+                }
+                _grade = g;
+            }
+
+        }
+        public event Action<Student, char>? GradeChanged;
+        public Student(string name, int rollNumber, char grade) : base(name)
+        {
+            if (rollNumber <= 0) throw new ArgumentException("Roll number must be positive.");
+            this.RollNumber = rollNumber;
+            this.Grade = grade;
+        }
+        public void UpdateGrade(char newGrade)
+        {
+            char old = Grade;
+            this.Grade = newGrade;
+            GradeChanged?.Invoke(this, old);
+        }
+        public override void PrintInfo()
+        {
+            Console.WriteLine($"Name: {Name}, Roll: {RollNumber}, Grade: {Grade}");
+        }
+    }
+}
