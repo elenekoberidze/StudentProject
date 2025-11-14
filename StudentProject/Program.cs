@@ -1,8 +1,5 @@
 ﻿class Program
 {
-    static void Main()
-    {
-        var manager = new StudentManager();
-        manager.Run();     
-    }
+    static void Main() => new AppController().Run();
+
 }
