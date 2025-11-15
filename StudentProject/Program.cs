@@ -1,4 +1,6 @@
-﻿class Program
+﻿using StudentProject.Services;
+
+class Program
 {
     static void Main() => new AppController().Run();
 

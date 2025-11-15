@@ -35,12 +35,20 @@ namespace StudentProject.Services
                         case "2":
                            ViewAll();
                             break;
-                       
                         case "3":
+                            SearchStudent();
+                            break;
+                        case "4":
+                            UpdateGrade();
+                            break;
+                        case "5":
                             studentManager.SaveStudentsToFile();
                             Console.WriteLine("Students saved. Exiting...");
                             return;
-                        
+                            case "6":
+                                Console.WriteLine("Exiting without saving...");
+                                return;
+
                         default:
                             Console.WriteLine("Invalid choice. Try again.");
                             break;
@@ -84,8 +92,50 @@ namespace StudentProject.Services
         private void ViewAll()
         {
             Console.WriteLine("\n--- ALL STUDENTS ---");
-            foreach (var s in studentManager.GetAllStudents()) ;
-               
+            var students = studentManager.GetAllStudents();
+            if (!students.Any())
+            {
+                Console.WriteLine("No students found");
+                return;
+            }
+            foreach (var s in students)
+            {
+                s.PrintInfo();
+            }
+
+        }
+        private void SearchStudent()
+        {
+            Console.Write("Enter roll number to search: ");
+            if (!int.TryParse(Console.ReadLine(), out int roll))
+                throw new ArgumentException("Invalid roll number.");
+            var student = studentManager.FindStudent(roll);
+            if (student == null)
+            {
+                Console.WriteLine("Student not found.");
+            }
+            else
+            {
+                student.PrintInfo();
+            }
+            Console.WriteLine($"Name:{student.Name}, Roll: {student.RollNumber}, Grade: {student.Grade}");
+        }
+        private void UpdateGrade()
+        {
+            Console.WriteLine("Enter rolll number to update: ");
+            if (!int.TryParse(Console.ReadLine(), out int roll))
+                throw new ArgumentException("Invalid roll number.");
+            var stu = studentManager.FindStudent(roll);
+            if (stu == null)
+            {
+                Console.WriteLine("Student not found.");
+                return;
+            }
+            Console.Write("Enter new grade (A-F): ");
+            char newGrade = char.ToUpper(Console.ReadKey().KeyChar);
+            Console.WriteLine();
+            stu.UpdateGrade(newGrade);
+            Console.WriteLine("Grade updated.");
         }
     }
 }

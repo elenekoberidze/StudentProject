@@ -13,7 +13,7 @@ namespace StudentProject.Models
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name cannot be empty.");
-            Name = name.Trim();
+            this.Name = name.Trim();
         }
         public abstract void PrintInfo();
     }
