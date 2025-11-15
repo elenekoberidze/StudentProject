@@ -118,7 +118,7 @@ namespace StudentProject.Services
             {
                 student.PrintInfo();
             }
-            Console.WriteLine($"Name:{student.Name}, Roll: {student.RollNumber}, Grade: {student.Grade}");
+            Console.WriteLine($"Name:{student?.Name}, Roll: {student?.RollNumber}, Grade: {student?.Grade}");
         }
         private void UpdateGrade()
         {
