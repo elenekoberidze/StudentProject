@@ -10,6 +10,7 @@ namespace StudentProject.Services
     public class AppController
     {
         private readonly StudentManager studentManager = new();
+
         public AppController()
         {
             studentManager.StudentAdded += (student) =>
@@ -18,6 +19,7 @@ namespace StudentProject.Services
             };
 
         }
+
         public void Run()
         {
             studentManager.LoadStudentsFromFile();
@@ -60,6 +62,7 @@ namespace StudentProject.Services
                 }
             }
         }
+
         private static void ShowMenu()
         {
             Console.WriteLine("\n======= STUDENT MANAGEMENT SYSTEM =======");
@@ -71,18 +74,23 @@ namespace StudentProject.Services
             Console.WriteLine("6. Exit without Saving");
             Console.Write("Enter choice: ");
         }
+
         private void AddStudent()
         {
             Console.Write("Enter name: ");
             string name = Console.ReadLine() ?? "";
             Console.Write("Enter roll number: ");
+
             if (!int.TryParse(Console.ReadLine(), out int roll))
                 throw new Exception("Invalid roll number.");
+
             Console.Write("Enter grade (A-F): ");
             char g = char.ToUpper(Console.ReadKey().KeyChar);
             Console.WriteLine();
             var stu = new Student(name, roll, g);
+
             stu.GradeChanged += (s, oldG) =>
+
             Console.WriteLine($"Event: Grade changed for {s.Name} from {oldG} to {s.Grade}");
 
             studentManager.AddStudent(stu);
@@ -92,12 +100,15 @@ namespace StudentProject.Services
         private void ViewAll()
         {
             Console.WriteLine("\n--- ALL STUDENTS ---");
+
             var students = studentManager.GetAllStudents();
+
             if (!students.Any())
             {
                 Console.WriteLine("No students found");
                 return;
             }
+
             foreach (var s in students)
             {
                 s.PrintInfo();
@@ -107,9 +118,12 @@ namespace StudentProject.Services
         private void SearchStudent()
         {
             Console.Write("Enter roll number to search: ");
+
             if (!int.TryParse(Console.ReadLine(), out int roll))
                 throw new ArgumentException("Invalid roll number.");
+
             var student = studentManager.FindStudent(roll);
+
             if (student == null)
             {
                 Console.WriteLine("Student not found.");
@@ -118,19 +132,24 @@ namespace StudentProject.Services
             {
                 student.PrintInfo();
             }
+
             Console.WriteLine($"Name:{student?.Name}, Roll: {student?.RollNumber}, Grade: {student?.Grade}");
         }
         private void UpdateGrade()
         {
             Console.WriteLine("Enter rolll number to update: ");
+
             if (!int.TryParse(Console.ReadLine(), out int roll))
                 throw new ArgumentException("Invalid roll number.");
+
             var stu = studentManager.FindStudent(roll);
+
             if (stu == null)
             {
                 Console.WriteLine("Student not found.");
                 return;
             }
+
             Console.Write("Enter new grade (A-F): ");
             char newGrade = char.ToUpper(Console.ReadKey().KeyChar);
             Console.WriteLine();

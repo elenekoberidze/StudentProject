@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace StudentProject.Services
 {
@@ -20,36 +21,54 @@ namespace StudentProject.Services
             students.Add(student);
             StudentAdded?.Invoke(student);
         }
+
         public IEnumerable<Student> GetAllStudents() => students;
+
         public Student? FindStudent(int rollNumber)
         {
             return students.FirstOrDefault(s => s.RollNumber == rollNumber);
         }
+
         public void UpdateStudentGrade(int rollNumber, char newGrade)
         {
             var student = FindStudent(rollNumber) ?? throw new ArgumentException($"Student with roll number {rollNumber} not found.");
             student.UpdateGrade(newGrade);
         }
+
+
         public void SaveStudentsToFile()
         {
-            using var writer = new StreamWriter("students.txt");
-            foreach (var student in students)
+            string filePath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Data", "students.xml");
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+
+            using(FileStream fs = new FileStream(filePath, FileMode.Create))
             {
-                writer.WriteLine($"{student.Name},{student.RollNumber},{student.Grade}");
+                serializer.Serialize(fs, students);
             }
+
         }
+
         public void LoadStudentsFromFile()
         {
-            if (!File.Exists("students.txt")) return;
-            foreach (var line in File.ReadAllLines("students.txt"))
+            string filePath = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "Data", "students.xml");
+
+            if(!File.Exists(filePath))
             {
-                var parts = line.Split(',');
-                if (parts.Length != 3) continue;
-                string name = parts[0];
-                int roll = int.Parse(parts[1]);
-                char grade = char.Parse(parts[2]);
-                students.Add(new Student(name, roll, grade));
+                throw new FileNotFoundException("The students.xml file does not exist.",filePath);
             }
+
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Student>));
+
+            using(FileStream fs = new FileStream(filePath, FileMode.Open))
+            {
+                students = (List<Student>)serializer.Deserialize(fs);
+            }
+
         }
     }
 }
